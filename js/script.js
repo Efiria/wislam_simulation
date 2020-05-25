@@ -1,17 +1,13 @@
 $( document ).ready(function() {
 	console.log( "ready!" );
 
-
-
-
-
 	$('.loader').hide();
 	$('.container').show();
 
 	var rangewifi = 400;
 	$("#rangeWifi").html("portée : " + rangewifi);
 	$("#wifiRange1").val(rangewifi);
-	
+
 
 	var stage = new createjs.Stage("simulation")
 
@@ -38,10 +34,9 @@ $( document ).ready(function() {
 	$("#posWifi1").html("x : " + dragger1.x + "</br> y : " + dragger1.y);
 
 	dragger1.on("pressmove",function(evt) {
-		// currentTarget will be the container that the event listener was added to:
+
 		evt.currentTarget.x = evt.stageX;
 		evt.currentTarget.y = evt.stageY;
-		// make sure to redraw the stage to show the change:
 		stage.update();   
 		$("#posWifi1").html("x : " + evt.stageX + " </br> y : " + evt.stageY);
 	});
@@ -69,10 +64,9 @@ $( document ).ready(function() {
 	$("#posWifi2").html("x : " + dragger2.x + "</br> y : " + dragger2.y);
 
 	dragger2.on("pressmove",function(evt) {
-		// currentTarget will be the container that the event listener was added to:
+
 		evt.currentTarget.x = evt.stageX;
 		evt.currentTarget.y = evt.stageY;
-		// make sure to redraw the stage to show the change:
 		stage.update();   
 	});
 
@@ -97,10 +91,9 @@ $( document ).ready(function() {
 	$("#posWifi3").html("x : " + dragger3.x + "</br> y : " + dragger3.y);
 
 	dragger3.on("pressmove",function(evt) {
-		// currentTarget will be the container that the event listener was added to:
+
 		evt.currentTarget.x = evt.stageX;
 		evt.currentTarget.y = evt.stageY;
-		// make sure to redraw the stage to show the change:
 		stage.update();   
 	});
 
@@ -108,19 +101,34 @@ $( document ).ready(function() {
 	var user = new createjs.Shape();
 	user.graphics.beginFill("yellow").drawCircle(0, 0, 10);
 
+	var labeluser = new createjs.Text("user", "14px Arial", "#00000");
+	labeluser.textAlign = "center";
+	labeluser.y = -30;
+
 	var draggerUser = new createjs.Container(); 
 	draggerUser.x = 445
 	draggerUser.y = 555
-	draggerUser.addChild(user);
+	draggerUser.addChild(user,labeluser);
 	stage.addChild(draggerUser);
 
 	draggerUser.on("pressmove",function(evt) {
-		// currentTarget will be the container that the event listener was added to:
+
 		evt.currentTarget.x = evt.stageX;
 		evt.currentTarget.y = evt.stageY;
-		// make sure to redraw the stage to show the change:
 		stage.update();   
-		console.log(getDistance(evt.stageX,evt.stageY,dragger1.x,dragger1.y))
+
+		var distanceborne1 = getDistance(evt.stageX,evt.stageY,dragger1.x,dragger1.y)
+		var distanceborne2 = getDistance(evt.stageX,evt.stageY,dragger2.x,dragger2.y)
+		var distanceborne3 = getDistance(evt.stageX,evt.stageY,dragger3.x,dragger3.y)
+
+		distances=[distanceborne1,distanceborne2,distanceborne3]
+		var available=[]
+
+		if (distanceborne1 >= rangewifi) { $("#distWifi1").css("background-color", "red");  available = available.filter(function(e) { return e !== 'wifi1' }) } else { $("#distWifi1").css("background-color", "green"); available.push('wifi1')  }
+		if (distanceborne2 >= rangewifi) { $("#distWifi2").css("background-color", "red"); 	available = available.filter(function(e) { return e !== 'wifi2' })} else { $("#distWifi2").css("background-color", "green"); available.push('wifi2') }
+		if (distanceborne3 >= rangewifi+50) { $("#distWifi3").css("background-color", "red"); available = available.filter(function(e) { return e !== 'wifi3' }) } else { $("#distWifi3").css("background-color", "green"); available.push('wifi3') }
+
+		console.log(available);
 	});
 	
 	stage.update();
@@ -139,15 +147,27 @@ $( document ).ready(function() {
 
 	//Calcule distance avec borne 1
 
-	console.log(getDistance(draggerUser.x,draggerUser.y,dragger1.x,dragger1.y))
+	var distanceborne1 = getDistance(draggerUser.x,draggerUser.y,dragger1.x,dragger1.y)
+	var distanceborne2 = getDistance(draggerUser.x,draggerUser.y,dragger2.x,dragger2.y)
+	var distanceborne3 = getDistance(draggerUser.x,draggerUser.y,dragger3.x,dragger3.y)
+
+	if (distanceborne1 >= rangewifi) { $("#distWifi1").css("background-color", "red") } else { $("#distWifi1").css("background-color", "green") }
+	if (distanceborne2 >= rangewifi) { $("#distWifi2").css("background-color", "red") } else { $("#distWifi2").css("background-color", "green") }
+	if (distanceborne3 >= rangewifi+50) { $("#distWifi3").css("background-color", "red") } else { $("#distWifi3").css("background-color", "green") }
+
+	function getUserPosition(evt, distances) {
 
 
-	function getDistance(xa,ya,xb,yb) {
 		
-		distance = Math.round(Math.sqrt(Math.pow((xb - xa),2) + Math.pow((yb - ya),2)))
+	}
+	
+
+	function getDistance(xa, ya, xb, yb) {
+		
+		var distance = Math.round(Math.sqrt(Math.pow((xb - xa),2) + Math.pow((yb - ya),2)))
 
 		return distance
 	}
 
-
 });
+
