@@ -1,6 +1,14 @@
 $( document ).ready(function() {
 	console.log( "ready!" );
 
+	$('.loader').hide();
+	$('.container').show();
+
+	var rangewifi = 400;
+	$("#rangeWifi").html("portée : " + rangewifi);
+	$("#wifiRange1").val(rangewifi);
+	
+
 	var stage = new createjs.Stage("simulation")
 
 	stage.mouseMoveOutside = true; 
@@ -9,7 +17,7 @@ $( document ).ready(function() {
 	wifi1.graphics.beginFill("red").drawCircle(0, 0, 10);
 
 	var range1 = new createjs.Shape();
-	range1.graphics.beginFill("blue").drawCircle(0, 0, 400);
+	range1.graphics.beginFill("blue").drawCircle(0, 0, rangewifi);
 	range1.alpha = 0.05
 	range1.mouseEnabled = false
 
@@ -40,7 +48,7 @@ $( document ).ready(function() {
 	wifi2.graphics.beginFill("red").drawCircle(0, 0, 10);
 
 	var range2 = new createjs.Shape();
-	range2.graphics.beginFill("blue").drawCircle(0, 0, 400);
+	range2.graphics.beginFill("blue").drawCircle(0, 0, rangewifi);
 	range2.alpha = 0.05
 	range2.mouseEnabled = false
 
@@ -55,7 +63,7 @@ $( document ).ready(function() {
 	stage.addChild(dragger2);
 
 	$("#posWifi2").html("x : " + dragger2.x + "</br> y : " + dragger2.y);
-	
+
 	dragger2.on("pressmove",function(evt) {
 		// currentTarget will be the container that the event listener was added to:
 		evt.currentTarget.x = evt.stageX;
@@ -68,7 +76,7 @@ $( document ).ready(function() {
 	wifi3.graphics.beginFill("red").drawCircle(0, 0, 10);
 
 	var range3 = new createjs.Shape();
-	range3.graphics.beginFill("blue").drawCircle(0, 0, 450);
+	range3.graphics.beginFill("blue").drawCircle(0, 0, rangewifi+50);
 	range3.alpha = 0.05
 	range3.mouseEnabled = false
 

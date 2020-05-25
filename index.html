@@ -9,7 +9,8 @@
 </head>
 
 <body>
-	<div class="container">
+	<div class="loader"></div>
+	<div class="container" style="display: none;">
 		<div class="row">
 
 			<div class="col-12 content">
@@ -28,6 +29,8 @@
 							<div class="col-12"> <h3>Informations</h3> </div>
 
 							<div class="col-12">
+								<p>Portée des bornes wifi <br> <label id="rangeWifi"></label></p>
+								
 								<p>Position des bornes wifi</p>
 								<div class="row">
 									<div class="col-4">
@@ -45,7 +48,13 @@
 								</div>
 
 								<label id="displayRange1"></label>
-								<input type="range" class="custom-range" min="10" max="500" step="1" id="wifiRange1">
+								<input type="range" class="custom-range" min="10" max="500" step="1" id="wifiRange1" value="0">
+							</div>
+
+							<div>
+								<br>
+								<p>Position de l'utilisateur</p>
+
 							</div>
 						</div>
 					</div>
