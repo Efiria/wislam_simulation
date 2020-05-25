@@ -12,3 +12,7 @@
 	
 	background-image: url("../img/plan.jpg");
 }
+
+.container {
+	max-width: 1400px!important;
+}
