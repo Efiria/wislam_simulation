@@ -1,6 +1,10 @@
 $( document ).ready(function() {
 	console.log( "ready!" );
 
+
+
+
+
 	$('.loader').hide();
 	$('.container').show();
 
@@ -116,15 +120,34 @@ $( document ).ready(function() {
 		evt.currentTarget.y = evt.stageY;
 		// make sure to redraw the stage to show the change:
 		stage.update();   
+		console.log(getDistance(evt.stageX,evt.stageY,dragger1.x,dragger1.y))
 	});
 	
-
 	stage.update();
 
+	//----------------------
 
 
-	console.log()
 
+
+	//Si utilisateur est +400 distance d'une borne alors elle n'est pas choisi pour la triangulation
+	//Si plus de 2 bornes sont disponible pour la triangulation alors on prends les deux plus proches
+
+	//racine de (xb-xa)² + (yb-ya)²
+
+	//Cette partie sert a simuler la porter d'une borne wifi.
+
+	//Calcule distance avec borne 1
+
+	console.log(getDistance(draggerUser.x,draggerUser.y,dragger1.x,dragger1.y))
+
+
+	function getDistance(xa,ya,xb,yb) {
+		
+		distance = Math.round(Math.sqrt(Math.pow((xb - xa),2) + Math.pow((yb - ya),2)))
+
+		return distance
+	}
 
 
 });
