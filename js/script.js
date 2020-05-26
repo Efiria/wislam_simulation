@@ -13,93 +13,15 @@ $( document ).ready(function() {
 
 	stage.mouseMoveOutside = true; 
 
-	var wifi1 = new createjs.Shape();
-	wifi1.graphics.beginFill("red").drawCircle(0, 0, 10);
+	createWifiBorne('Wifi 1', 200, 180)
+	createWifiBorne('Wifi 2', 470, 180)
+	createWifiBorne('Wifi 3', 735, 180)
 
-	var range1 = new createjs.Shape();
-	range1.graphics.beginFill("blue").drawCircle(0, 0, rangewifi);
-	range1.alpha = 0.05
-	range1.mouseEnabled = false
+	createWifiBorne('Wifi 4', 330, 395)
+	createWifiBorne('Wifi 5', 500, 515)
+	createWifiBorne('Wifi 6', 725, 410)
 
-	var label1 = new createjs.Text("Wifi1", "14px Arial", "#00000");
-	label1.textAlign = "center";
-	label1.y = -30;
-
-	var dragger1 = new createjs.Container();
-	dragger1.x = 340
-	dragger1.y = 280;
-	dragger1.addChild(wifi1,range1,label1);
-	stage.addChild(dragger1);
-
-	$("#posWifi1").html("x : " + dragger1.x + "</br> y : " + dragger1.y);
-
-	dragger1.on("pressmove",function(evt) {
-
-		evt.currentTarget.x = evt.stageX;
-		evt.currentTarget.y = evt.stageY;
-		stage.update();   
-		$("#posWifi1").html("x : " + evt.stageX + " </br> y : " + evt.stageY);
-	});
-
-
-
-	var wifi2 = new createjs.Shape();
-	wifi2.graphics.beginFill("red").drawCircle(0, 0, 10);
-
-	var range2 = new createjs.Shape();
-	range2.graphics.beginFill("blue").drawCircle(0, 0, rangewifi);
-	range2.alpha = 0.05
-	range2.mouseEnabled = false
-
-	var label2 = new createjs.Text("Wifi2", "14px Arial", "#00000");
-	label2.textAlign = "center";
-	label2.y = -30;
-
-	var dragger2 = new createjs.Container();
-	dragger2.x = 620
-	dragger2.y = 295
-	dragger2.addChild(wifi2,range2,label2);
-	stage.addChild(dragger2);
-
-	$("#posWifi2").html("x : " + dragger2.x + "</br> y : " + dragger2.y);
-
-	dragger2.on("pressmove",function(evt) {
-
-		evt.currentTarget.x = evt.stageX;
-		evt.currentTarget.y = evt.stageY;
-		stage.update();   
-		$("#posWifi2").html("x : " + evt.stageX + " </br> y : " + evt.stageY);
-	});
-
-	var wifi3 = new createjs.Shape();
-	wifi3.graphics.beginFill("red").drawCircle(0, 0, 10);
-
-	var range3 = new createjs.Shape();
-	range3.graphics.beginFill("blue").drawCircle(0, 0, rangewifi+50);
-	range3.alpha = 0.05
-	range3.mouseEnabled = false
-
-	var label3 = new createjs.Text("Wifi3", "14px Arial", "#00000");
-	label3.textAlign = "center";
-	label3.y = -30;
-
-	var dragger3 = new createjs.Container(); 
-	dragger3.x = 485
-	dragger3.y = 405
-	dragger3.addChild(wifi3,range3,label3);
-	stage.addChild(dragger3);
-
-	$("#posWifi3").html("x : " + dragger3.x + "</br> y : " + dragger3.y);
-
-	dragger3.on("pressmove",function(evt) {
-
-		evt.currentTarget.x = evt.stageX;
-		evt.currentTarget.y = evt.stageY;
-		stage.update();   
-
-		$("#posWifi3").html("x : " + evt.stageX + " </br> y : " + evt.stageY);
-	});
-
+	var wifiAvailable = getWifiBorne()
 
 	var user = new createjs.Shape();
 	user.graphics.beginFill("yellow").drawCircle(0, 0, 10);
@@ -111,8 +33,11 @@ $( document ).ready(function() {
 	var draggerUser = new createjs.Container(); 
 	draggerUser.x = 445
 	draggerUser.y = 555
+	draggerUser.name = 'user'
 	draggerUser.addChild(user,labeluser);
 	stage.addChild(draggerUser);
+
+	getWifiInRange(wifiAvailable, draggerUser.x, draggerUser.y)
 
 	draggerUser.on("pressmove",function(evt) {
 
@@ -120,7 +45,9 @@ $( document ).ready(function() {
 		evt.currentTarget.y = evt.stageY;
 		stage.update();   
 
-		var distanceborne1 = getDistance(evt.stageX,evt.stageY,dragger1.x,dragger1.y)
+		var wifiConnected = getWifiInRange(wifiAvailable, evt.stageX, evt.stageY);
+
+		/*var distanceborne1 = getDistance(evt.stageX,evt.stageY,dragger1.x,dragger1.y)
 		var distanceborne2 = getDistance(evt.stageX,evt.stageY,dragger2.x,dragger2.y)
 		var distanceborne3 = getDistance(evt.stageX,evt.stageY,dragger3.x,dragger3.y)
 
@@ -147,14 +74,79 @@ $( document ).ready(function() {
 		}
 
 		getTrilateration(position1,position2,position3);
-
+*/
 	});
 	
 	stage.update();
 
 	//----------------------
 
+	function createWifiBorne(nameWifi, x, y) {
+		
+		var wifidisplay = new createjs.Shape();
+		wifidisplay.graphics.beginFill("red").drawCircle(0, 0, 10);
+		wifidisplay.name = 'borneWifi'
 
+		var wifirange = new createjs.Shape();
+		wifirange.graphics.beginFill("blue").drawCircle(0, 0, rangewifi);
+		wifirange.alpha = 0.03
+		wifirange.name = 'rangeWifi'
+
+		var wificontainer = new createjs.Container(); 
+		wificontainer.name = nameWifi
+		wificontainer.x = x
+		wificontainer.y = y
+
+		wificontainer.addChild(wifidisplay,wifirange);
+		stage.addChild(wificontainer);
+
+		stage.update();
+	}
+
+	function getWifiBorne() {
+
+		var bornesWifi = []
+
+		stage.children.forEach(function(item){
+
+			if (item.name.toString().includes('Wifi')) {
+				bornesWifi.push(item)
+			}
+		});
+
+		return bornesWifi
+	}
+
+	function getWifiInRange(wifiAvailable, userx, usery) {
+		
+		var wifiInRange = []
+
+		wifiAvailable.forEach(function(item){
+
+			var distance = getDistance(item.x, item.y, userx, usery)
+
+			if (distance <= rangewifi) {
+
+			console.log(distance)
+
+				item.children[0].graphics.clear().beginFill("green").drawCircle(0, 0, 10)
+				wifiInRange.push(item)
+
+				stage.update();
+
+			} else {
+
+				item.children[0].graphics.clear().beginFill("red").drawCircle(0, 0, 10)
+
+				stage.update();
+
+			}
+
+		});
+
+		console.log(wifiInRange)
+		return wifiInRange
+	}
 
 
 	//Si utilisateur est +400 distance d'une borne alors elle n'est pas choisi pour la triangulation
@@ -166,13 +158,11 @@ $( document ).ready(function() {
 
 	//Calcule distance avec borne 1
 
-	var distanceborne1 = getDistance(draggerUser.x,draggerUser.y,dragger1.x,dragger1.y)
-	var distanceborne2 = getDistance(draggerUser.x,draggerUser.y,dragger2.x,dragger2.y)
-	var distanceborne3 = getDistance(draggerUser.x,draggerUser.y,dragger3.x,dragger3.y)
-
+	
+/*
 	if (distanceborne1 >= rangewifi) { $("#distWifi1").css("background-color", "red") } else { $("#distWifi1").css("background-color", "green") }
 	if (distanceborne2 >= rangewifi) { $("#distWifi2").css("background-color", "red") } else { $("#distWifi2").css("background-color", "green") }
-	if (distanceborne3 >= rangewifi+50) { $("#distWifi3").css("background-color", "red") } else { $("#distWifi3").css("background-color", "green") }
+	if (distanceborne3 >= rangewifi) { $("#distWifi3").css("background-color", "red") } else { $("#distWifi3").css("background-color", "green") }
 
 		var position1 = {
 			x : dragger1.x,
@@ -192,7 +182,7 @@ $( document ).ready(function() {
 			distance : distanceborne3
 		}
 	
-	getTrilateration(position1,position2,position3);
+	getTrilateration(position1,position2,position3);*/
 
 
 	function getTrilateration(position1, position2, position3) {
