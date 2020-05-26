@@ -1,5 +1,4 @@
 $( document ).ready(function() {
-	console.log( "ready!" );
 
 	$('.loader').hide();
 	$('.container').show();
@@ -37,7 +36,8 @@ $( document ).ready(function() {
 	draggerUser.addChild(user,labeluser);
 	stage.addChild(draggerUser);
 
-	getWifiInRange(wifiAvailable, draggerUser.x, draggerUser.y)
+	calculateUserPosition(getWifiInRange(wifiAvailable, draggerUser.x, draggerUser.y))
+
 
 	draggerUser.on("pressmove",function(evt) {
 
@@ -47,34 +47,17 @@ $( document ).ready(function() {
 
 		var wifiConnected = getWifiInRange(wifiAvailable, evt.stageX, evt.stageY);
 
-		/*var distanceborne1 = getDistance(evt.stageX,evt.stageY,dragger1.x,dragger1.y)
-		var distanceborne2 = getDistance(evt.stageX,evt.stageY,dragger2.x,dragger2.y)
-		var distanceborne3 = getDistance(evt.stageX,evt.stageY,dragger3.x,dragger3.y)
+		if (wifiConnected.nbWifi < 3) {
 
-		if (distanceborne1 >= rangewifi) { $("#distWifi1").css("background-color", "red")} else { $("#distWifi1").css("background-color", "green")}
-		if (distanceborne2 >= rangewifi) { $("#distWifi2").css("background-color", "red")} else { $("#distWifi2").css("background-color", "green")}
-		if (distanceborne3 >= rangewifi+50) { $("#distWifi3").css("background-color", "red")} else { $("#distWifi3").css("background-color", "green")}
+			evt.stageX = 445
+			evt.stageY = 555
+			stage.update();
+
+		} else {
+
+			calculateUserPosition(wifiConnected)
+		}
 		
-		var position1 = {
-			x : dragger1.x,
-			y : dragger1.y,
-			distance : distanceborne1
-		}
-
-		var position2 = {
-			x : dragger2.x,
-			y : dragger2.y,
-			distance : distanceborne2
-		}
-
-		var position3 = {
-			x : dragger3.x,
-			y : dragger3.y,
-			distance : distanceborne3
-		}
-
-		getTrilateration(position1,position2,position3);
-*/
 	});
 	
 	stage.update();
@@ -119,7 +102,9 @@ $( document ).ready(function() {
 
 	function getWifiInRange(wifiAvailable, userx, usery) {
 		
-		var wifiInRange = []
+		let wifiInRange = []
+		var cpt = 0
+
 
 		wifiAvailable.forEach(function(item){
 
@@ -127,10 +112,11 @@ $( document ).ready(function() {
 
 			if (distance <= rangewifi) {
 
-			console.log(distance)
-
 				item.children[0].graphics.clear().beginFill("green").drawCircle(0, 0, 10)
-				wifiInRange.push(item)
+				item.distance = distance
+				wifiInRange[distance] = item
+
+				cpt ++
 
 				stage.update();
 
@@ -144,46 +130,74 @@ $( document ).ready(function() {
 
 		});
 
-		console.log(wifiInRange)
-		return wifiInRange
+		return {
+			wifiInRange : wifiInRange,
+			nbWifi : cpt
+		}
 	}
 
+	function calculateUserPosition(wifiAvailable) {
 
-	//Si utilisateur est +400 distance d'une borne alors elle n'est pas choisi pour la triangulation
-	//Si plus de 2 bornes sont disponible pour la triangulation alors on prends les deux plus proches
+		var sortedWifi = {}
 
-	//racine de (xb-xa)² + (yb-ya)²
+		//Order les bornes wifi
+		if (wifiAvailable.nbWifi > 3) {
 
-	//Cette partie sert a simuler la porter d'une borne wifi.
+			wifiAvailable.wifiInRange.forEach(function(item){
 
-	//Calcule distance avec borne 1
+				sortedWifi[item.distance] = item.name
 
-	
-/*
-	if (distanceborne1 >= rangewifi) { $("#distWifi1").css("background-color", "red") } else { $("#distWifi1").css("background-color", "green") }
-	if (distanceborne2 >= rangewifi) { $("#distWifi2").css("background-color", "red") } else { $("#distWifi2").css("background-color", "green") }
-	if (distanceborne3 >= rangewifi) { $("#distWifi3").css("background-color", "red") } else { $("#distWifi3").css("background-color", "green") }
+			})
 
-		var position1 = {
-			x : dragger1.x,
-			y : dragger1.y,
-			distance : distanceborne1
+			sortedWifi = Object.keys(sortedWifi)
+
+			for (var i = 3; i < sortedWifi.length; i++) {
+				wifiAvailable.wifiInRange.splice(sortedWifi[i], 1)
+			}
+		} else {
+
+			wifiAvailable.wifiInRange.forEach(function(item){
+
+				sortedWifi[item.distance] = item.name
+
+			})
+
+			sortedWifi = Object.keys(sortedWifi)
 		}
 
-		var position2 = {
-			x : dragger2.x,
-			y : dragger2.y,
-			distance : distanceborne2
-		}
+		var position1 = {}
+		var position2 = {}
+		var position3 = {}
 
-		var position3 = {
-			x : dragger3.x,
-			y : dragger3.y,
-			distance : distanceborne3
-		}
-	
-	getTrilateration(position1,position2,position3);*/
+		for (var i = 0; i < 3; i++) {
+			if (i == 0) {
+				position1 = {
+					x : wifiAvailable.wifiInRange[sortedWifi[i]].x,
+					y : wifiAvailable.wifiInRange[sortedWifi[i]].y,
+					distance : wifiAvailable.wifiInRange[sortedWifi[i]].distance
+				}
+			}
 
+			if (i == 1) {
+				position2 = {
+					x : wifiAvailable.wifiInRange[sortedWifi[i]].x,
+					y : wifiAvailable.wifiInRange[sortedWifi[i]].y,
+					distance : wifiAvailable.wifiInRange[sortedWifi[i]].distance
+				}
+
+			}
+
+			if (i == 2) {
+				position3 = {
+					x : wifiAvailable.wifiInRange[sortedWifi[i]].x,
+					y : wifiAvailable.wifiInRange[sortedWifi[i]].y,
+					distance : wifiAvailable.wifiInRange[sortedWifi[i]].distance
+				}
+			}
+
+			getTrilateration(position1,position2,position3);
+		}
+	}
 
 	function getTrilateration(position1, position2, position3) {
 	    var xa = position1.x;
