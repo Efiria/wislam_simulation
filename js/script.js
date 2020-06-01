@@ -20,6 +20,8 @@ $( document ).ready(function() {
 	createWifiBorne('Wifi 5', 500, 515)
 	createWifiBorne('Wifi 6', 725, 410)
 
+	createDestinationBorne('Machine', 250, 50)
+
 	var wifiAvailable = getWifiBorne()
 
 	var user = new createjs.Shape();
@@ -82,6 +84,23 @@ $( document ).ready(function() {
 
 		wificontainer.addChild(wifidisplay,wifirange);
 		stage.addChild(wificontainer);
+
+		stage.update();
+	}
+
+	function createDestinationBorne(nameWifi, x, y) {
+		
+		var destinationDisplay = new createjs.Shape();
+		destinationDisplay.graphics.beginFill("yellow").drawCircle(0, 0, 10);
+		destinationDisplay.name = 'destination'
+
+		var destinationContainer = new createjs.Container(); 
+		destinationContainer.name = nameWifi
+		destinationContainer.x = x
+		destinationContainer.y = y
+
+		destinationContainer.addChild(destinationDisplay);
+		stage.addChild(destinationContainer);
 
 		stage.update();
 	}
